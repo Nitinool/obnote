@@ -1,0 +1,14 @@
+# Obsidian apecific
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/app.json
+.obsidian/graph.json
+.obsidian/cache/
+.obsidian/plugins/
+
+# Trash
+.trash/
+
+# General
+.DS_Store
+Thumbs.db
