@@ -30,3 +30,5 @@
 3.git pull origin master  把远程仓库下载下来 让本地保持最新
 4.把本地需要更细的文件先git add git commit -m 提交
 5.在用git push origin master 更新远程仓库
+
+asdada
