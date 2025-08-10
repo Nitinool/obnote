@@ -1,4 +1,50 @@
 
+
+##### git同步笔记教程
+
+
+准备
+1 初始化本地仓库 在本地文件的文件夹打开git bash使用 git init 初始化本地仓库
+2 设置.gitignore文件 这一步确保某些文件不需要同步
+3 链接远程仓库 git remote add origin https://github.com/your-username/obsidian-notes.git
+这一步意思是 连接了一个名叫origin的远程仓库
+
+第一次提交
+``` 
+#所有操作在obsidian的笔记文件夹目录下的git bash 里面完成
+
+# 添加所有文件到暂存区
+git add .
+
+# 创建第一个提交
+git commit -m "Initial commit"
+
+# (可选但推荐) 确保你的主分支名为 main
+git branch -m master main
+
+# 首次推送到远程仓库，并建立跟踪关系
+git push -u origin main
+```
+
+日常提交和拉取最新的笔记
+```
+# 从名为 `origin` 的远程仓库，拉取 `main` 分支的最新内容，并与你的本地分支合并。
+git pull origin main
+
+git add .
+git commit -m "写下本次修改的摘要信息"
+git push origin main
+```
+
+
+
+
+
+
+
+
+
+
 常用命令
 - git status 查看当前仓库状态
 - git init 初始化当前仓库
