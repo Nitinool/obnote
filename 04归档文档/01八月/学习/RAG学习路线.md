@@ -271,3 +271,135 @@ Settings.embed_model = embed_model
 ```
 
 `LlamaIndex`框架非常清楚，在需要生成向量时，它会自动调用你在`Settings.embed_model`中指定的模型；在需要生成最终答案时，它会自动调用你在`Settings.llm`中指定的模型。
+
+
+
+
+---
+
+### **RAG技术栈概览**
+
+以下是当前（2025年）构建一个完整的RAG应用，从开发到部署，所涉及的主流技术栈。我将它按照RAG的生命周期进行结构化分类。
+#### 1. 编排与调度框架 (Orchestration Frameworks)
+
+这是整个RAG应用的“粘合剂”，负责连接和调度其他所有组件。
+
+- **`LangChain`**: 功能最全面、最灵活的框架，提供了大量的组件和链式调用（Chains）。自由度高，但学习曲线也相对陡峭，有时被批评为“过度封装”。
+    
+- **`LlamaIndex`**: **专注于RAG**的框架。它在数据索引、构建和检索方面做了大量优化，对于构建以检索为核心的应用来说，通常更直接、更高效。
+    
+- **Semantic Kernel**: 微软推出的框架，强调与微软生态（如Azure）的结合，设计思路是“目标驱动”，让代码更易于规划和管理。
+    
+
+#### 2. 大语言模型 (LLMs) - “大脑”
+
+提供最终思考和生成能力的核心。
+
+- **闭源API服务**:
+    
+    - **国际**: OpenAI (GPT系列), Anthropic (Claude系列), Google (Gemini系列)。
+        
+    - **国内**: **智谱AI (GLM系列)**, **月之暗面 (Kimi)**, **阿里通义 (Qwen)**, **百度文心 (ERNIE)**。
+        
+- **开源模型 (Self-hosting)**:
+    
+    - **Llama系列 (Meta)**: 社区生态最庞大，是开源模型事实上的标准之一。
+        
+    - **Mistral/Mixtral (Mistral AI)**: 以高效和“混合专家模型(MoE)”著称，性能优异。
+        
+    - **Qwen系列 (阿里通义)**: 中英文能力均衡，在国内应用广泛。
+        
+    - **ChatGLM/DeepSeek/Yi**: 其他优秀的国产开源模型。
+        
+
+#### 3. 嵌入模型 (Embedding Models) - “翻译官”
+
+负责将文本转换为向量，是检索质量的基石。
+
+- **闭源API服务**:
+    
+    - OpenAI (`text-embedding-3-large/small`)
+        
+    - 智谱AI (`embedding-2`)
+        
+    - Cohere (`embed-v3.0`)
+        
+- **开源模型**:
+    
+    - **Hugging Face**: 开源Embedding模型的大本营。
+        
+    - **BGE (BAAI)**: 北京智源人工智能研究院推出的模型，曾长期霸榜，中英文效果都很好。
+        
+    - **M3E/GTE**: 其他流行的开源选项。
+        
+    - **`sentence-transformers`**: 在代码中使用这些开源Embedding模型的必备库。
+        
+
+#### 4. 向量数据库 (Vector Databases) - “记忆图书馆”
+
+负责高效地存储和检索海量向量。
+
+- **专业向量数据库 (功能强大)**:
+    
+    - **`Milvus`**: 一个功能完备的开源向量数据库，也是Zilliz Cloud的内核，生产级应用首选之一。
+        
+    - **`Pinecone`**: 领先的商业化（SaaS）向量数据库服务，使用简单，性能稳定。
+        
+    - **`Weaviate`**: 开源，支持GraphQL查询，内置了数据处理模块。
+        
+    - **`Qdrant`**: 用Rust编写，性能和内存安全是其亮点。
+        
+- **轻量级向量数据库 (适合快速开发和中小型项目)**:
+    
+    - **`ChromaDB`**: "The AI-native open-source embedding database"，上手非常快，常用于开发和演示。
+        
+    - **`FAISS` (Facebook AI)**: 一个高性能的向量相似度搜索库，而不是一个完整的数据库。常被其他系统集成作为底层检索引擎。
+        
+- **传统数据库的向量扩展**:
+    
+    - **`PostgreSQL` + `pgvector`**: 在你已有的PostgreSQL数据库上增加向量搜索能力。
+        
+    - **`Redis`**: 同样提供了向量搜索的功能。
+        
+
+#### 5. 数据处理与加载 (Data Ingestion & Processing)
+
+负责将原始数据（PDF, HTML, DOCX等）清洗并转换为适合RAG处理的格式。
+
+- **文档加载器**: `LlamaIndex` 和 `LangChain` 都内置了大量的Document Loaders。
+    
+- **`Unstructured.io`**: 一个强大的开源库，专门用于从各种复杂、非结构化的文件中提取干净的文本和元数据。
+    
+- **`BeautifulSoup` / `Scrapy`**: 专用于网络爬虫和HTML解析。
+    
+- **`Pandas`**: 用于处理表格和结构化数据。
+    
+
+#### 6. 部署与服务 (Deployment & Serving)
+
+将你的RAG应用打包成服务，供用户调用。
+
+- **模型服务框架 (针对开源模型)**:
+    
+    - **`Ollama`**: 在本地或服务器上快速部署和运行开源LLM的最简单方法。
+        
+    - **`vLLM` / `TGI (Text Generation Inference)`**: 面向生产环境的高性能推理服务框架，能显著提高吞吐量。
+        
+- **应用接口与界面**:
+    
+    - **`FastAPI`**: 构建高性能Python API的首选。
+        
+    - **`Streamlit` / `Gradio`**: 快速为你的AI应用构建一个可交互的Web Demo界面。
+        
+- **基础设施**:
+    
+    - **`Docker`**: 将你的应用和环境打包成容器，实现标准化的部署。
+        
+    - **`Kubernetes`**: 容器编排系统，用于大规模、高可用的部署。
+        
+    - **云平台**: AWS, Azure, Google Cloud, 阿里云, 腾讯云等。
+        
+
+---
+
+**总结**: 一个典型的RAG项目，你可能会选择 `LlamaIndex` + `ZhipuAI` + `Milvus`/`ChromaDB` + `FastAPI` + `Docker` 这样的组合。这个技术栈是模块化的，你可以根据你的具体需求（性能、成本、开发速度、数据隐私等）自由替换其中的任何一个组件。
