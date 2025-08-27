@@ -558,3 +558,124 @@ try{
 主要是自定义异常 抛异常和处理异常
 ```
 #没听懂
+
+
+
+
+
+
+
+
+
+
+## 集合 collection
+java中的集合其实是集合框架 针对单一数据类型和键值对类型
+
+1 什么时候需要集合对象？数据的个数的时候。
+2 为什么不使用数组？因为数组使用起来不方便。
+
+
+1 Cllection接口
+	常用的子接口
+		List 按顺序保存数据 数据可以重复
+			具体实现类：ArrayList，LinkedList
+		Set  无序保存 数据不能重复
+			具体实现类： HashSet
+		Queue 队列
+			具体实现类： ArrayBlockingQueue
+2 Map接口
+	具体实现类 HashMap HashTable
+
+
+### 01 ArrayList
+```java
+可以看成一个封装了数组的类
+
+1 创建对象
+ArrayList list = new ArrayList()
+参数：无参，数字（表示初始化数组长度），集合对象
+返回值:
+
+2 增删改查
+
+增加数据 list.add("zhangsan") 
+
+存放的数据是数据的内存地址，不是真实的值。
+如果存放数据时，集合为空，那么会自动创建一个长度为10的数组。
+如果数据个数超出数组容量时，集合会自动扩容。（集合类会复制一个长度比原来数组更长的数组，然后把数据放到新的数组里面）
+
+获取长度 list.size() 
+获取指定位置的数据 list.get(index)
+修改指定位置的数据 list.set(1,"lisi") 传入要改的index和要改的值 返回修改前的值
+删除指定位置的数据 list.remove(1) 传入要删除的indx 返回删除的值
+```
+
+### 02LinkedList  
+```java
+类似于双链表
+
+1 创建对象
+LinkedList list = new LinkedList()
+参数：无参，集合对象
+
+2 增删改查
+增加数据 list.add("zhangsan") list.addFirst("zhangsan") 
+获取数据 list.getFirst() list.getLast()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
