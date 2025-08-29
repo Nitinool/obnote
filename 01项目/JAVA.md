@@ -799,28 +799,247 @@ public class Main {
 
 
 
+## IO 数据流操作
+
+数据 + 流(Stream)转 操作
+
+数据 通过 阀门和管道 在不同地方流转
+
+### 01文件流
+
+Java无法直接访问文件 所有要通过 file 类来对关联文件 然后对文件进行操作
+
+```java
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+          
+        //创建文件对象 使用文件路径关联系统文件  
+        String filePath = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.txt";  
+        File file = new File(filePath);  
+        //直接打印出来的是文件的路径  
+        System.out.println(file);  
+          
+        //文件对象的操作  
+        //file可能是文件也可能是文件夹 所以需要先判断是否为文件  
+        if(file.exists()){  
+            System.out.println("文件对象存在");  
+            if(file.isFile()){  
+                System.out.println("文件对象关联的是一个文件");  
+                System.out.println(file.getName());  
+                System.out.println(file.length());  
+                System.out.println(file.getAbsolutePath());  
+                  
+            }else if(file.isDirectory()){  
+                System.out.println(file.getName());  
+                System.out.println(file.getAbsolutePath());  
+                //遍历文件夹里面的文件名  
+                String[] files = file.list();  
+                for(String name : files){  
+                    System.out.println(name);  
+                }  
+                //遍历文件夹里面的文件对象  
+                File[] files1 = file.listFiles();  
+                for (File listFile : files1) {  
+                    System.out.println(listFile.getName());  
+                }  
+  
+            }  
+        }else {  
+            System.out.println("文件不存在，创建新的文件");  
+            file.mkdirs(); //创建文件目录  
+            file.createNewFile();  
+        }  
+    }  
+}
+```
 
 
+### 02管道流--文件复制
+
+```java
+
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+  
+        //01 创建文件对象 使用文件路径关联系统文件  
+        String departure = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.txt";  
+        //假设我们要生成一个复制文件  
+        String destination = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.copy.txt";  
+  
+        //02 创建数据流传的管道  
+//        FileInputStream in = new FileInputStream();  
+//        FileOutputStream out = new FileOutputStream();  
+        FileInputStream in = null;  
+        FileOutputStream out = null;  
+        //这里不能直接new 需要捕获异常  
+        try {  
+            //把文件对象放进去  
+             in = new FileInputStream(departure);  
+             out = new FileOutputStream(destination);  
+             //打开阀门  
+//            int data = in.read();  
+//            // 每次传送一个字符就会关闭  
+//            out.write(data);  
+//            //            data = in.read();  
+//            out.write(data);  
+//  
+//            data = in.read();  
+//            out.write(data);  
+            //如果文件读取到最后 那就是-1  
+            int data = -1;  
+            while ((data = in.read()) != -1) {  
+                out.write(data);  
+            }  
+        }catch (IOException e){  
+            throw new RuntimeException(e);  
+        }finally {  
+            //关闭阀门  
+            if (in != null) {  
+                in.close();  
+            }  
+            if (out != null) {  
+                out.close();  
+            }  
+        }  
+  
+    }  
+}
+```
+
+### 03缓冲流 提高每次读取的效率
+
+在管道和开关之间加上一个缓冲区
+```java
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+  
+        //01 创建文件对象 使用文件路径关联系统文件  
+        String departure = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.txt";  
+        //假设我们要生成一个复制文件  
+        String destination = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.copy.txt";  
+  
+        //02 创建数据流传的管道对象  
+        FileInputStream in = null;  
+        FileOutputStream out = null;  
+  
+        //03 创建缓冲输入输出流  
+        BufferedInputStream buffIn = null;  
+        BufferedOutputStream buffOut = null;  
+  
+        //04 缓冲区 水桶  
+        byte[] cache = new byte[1024];  
+  
+        try {  
+            //把文件对象放进开关  
+            in = new FileInputStream(departure);  
+            out = new FileOutputStream(destination);  
+            //把文件对象放进缓冲管道  
+            buffIn = new BufferedInputStream(in);  
+            buffOut = new BufferedOutputStream(out);  
+  
+            //如果文件读取到最后 那就是-1  
+            int data = -1;  
+            while ((data = buffIn.read(cache)) != -1) {  
+                buffOut.write(cache,0,data);  
+            }  
+  
+  
+        }catch (IOException e){  
+            throw new RuntimeException(e);  
+        }finally {  
+            //关闭阀门  
+            if (buffIn != null) {  
+                buffIn.close();  
+            }  
+            if (buffOut != null) {  
+                buffOut.close();  
+            }  
+        }  
+  
+    }  
+}
+```
+
+### 04 字符流 比字节流更加高效 可以按行读取文本数据
+
+```java
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+  
+        //01 创建文件对象 使用文件路径关联系统文件  
+        String departure = "C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.txt";  
+        //假设我们要生成一个复制文件  
+        File destination = new File("C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.copy.txt");  
+  
+        //02 字符输入输出流管道对象  
+        BufferedReader reader = null;  
+        PrintWriter writer = null;  
+  
+        try {  
+            //把文件对象放进开关  
+            reader = new BufferedReader(new FileReader(departure));  
+            writer = new PrintWriter(destination);  
+  
+            String line = null;  
+            while ((line = reader.readLine()) != null) {  
+                System.out.println(line);  
+                writer.println(line);  
+            }  
+            writer.flush();  
+        }catch (IOException e){  
+            throw new RuntimeException(e);  
+        }finally {  
+            //关闭阀门  
+            if (reader != null) {  
+                reader.close();  
+            }  
+            if (writer != null) {  
+                writer.close();  
+            }  
+        }  
+    }  
+}
+
+```
 
 
+### 05 序列化
+
+序列化： 把对象变成字节 
+
+```java
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+  
+        File file = new File("C:\\Users\\kk\\Desktop\\java学习\\JavaWeb\\web-all\\test\\test.copy.txt");  
+  
+        // 输入输出流管道对象  
+        ObjectOutputStream objOut = null;  
+        FileOutputStream out = null;  
+        try{  
+            out = new FileOutputStream(file);  
+            objOut = new ObjectOutputStream(out);  
+  
+            //java中只有增加了特殊标记的类才能在写文件时进行序列化  
+            //这里的标记其实就是一个接口  
+            User user = new User();  
+            objOut.writeObject(user);  
+            objOut.flush();  
+  
+  
+        } catch (IOException e){  
+            throw new RuntimeException(e);  
+        } finally {  
+  
+        }  
+    }  
+}  
+class User implements Serializable{  
+  
+}
+
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 线程 
 
