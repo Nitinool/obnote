@@ -610,7 +610,7 @@ ArrayList list = new ArrayList()
 删除指定位置的数据 list.remove(1) 传入要删除的indx 返回删除的值
 ```
 
-### 02LinkedList  
+### 02 LinkedList  
 ```java
 类似于双链表
 
@@ -624,32 +624,177 @@ LinkedList list = new LinkedList()
 ```
 
 
+### 03 泛型
+```java
+
+泛型作用就是定义容器里面的数据类型
+
+01 在集合里面使用
+原始方式
+ArrayList list = new ArrayList()
+Person person = new Person()
+list.add(person)
+Object o = list.get(0) 这里获取的类型是Object 后续要使用的话需要强制转换
+Person p = (Person) o;
+
+定义泛型
+ArrayList<Person> list = new ArrayList() //声明集合里面存放的是泛型
+Person person = new Person()
+list.add(person)
+Person o = list.get(0) 这里获取的类型是不需要强制转换
+
+02 在其他容器里面使用
+
+MyContainer<User> myContainer = new MyContainer()
+
+class MyContainer<C>{
+	public C data;
+}
+```
+
+
+### 04 集合--比较器
+
+```java
+
+java的集合实现了排序的方法 
+
+
+public class Main {  
+    public static void main(String[] args) {  
+  
+        ArrayList list = new ArrayList();  
+  
+        list.add(1);  
+        list.add(2);  
+        list.add(3);  
+  
+  
+        list.sort(new NumComparator());  
+        System.out.println(list);  
+    }  
+}  
+//排序需要传递一个实现了比较器接口的对象 
+class NumComparator implements Comparator<Integer> {  
+    @Override  
+    public int compare(Integer o1, Integer o2) {  
+        return o1 - o2;  正的就是升序 负的就是降序
+    }  
+}
+
+```
+
+### 05 ArrayList 和 LinkedList对比
+顺序表和链表的对比
+
+|            | 原理  | 增加数据开销  | 扩容开销    | 查询数据位置开销 |
+| ---------- | --- | ------- | ------- | -------- |
+| ArrayList  | 数组  | 小（除第一个） | 大（需要拷贝） | 大（线性查找）  |
+| LinkedList | 链表  | 大（除第一个） | 小       |          |
+
+
+
+### 06 集合--HashSet
+
+```JAVA
+
+Hash 哈希算法，散列算法
+HashSet底层是hash算法(hashcode)+数组+链表 hash算法会把重复hashcode的放到同一个位置，所以会被覆盖掉，所以hashset里面没有重复的数据。如果两个不一样的数据hashcode算出来的位置一样，那么会链在原来的那个位置上的数据后面
+
+增加数据 add
+修改数据 不能修改
+删除数据 remove
+查询数据 遍历
+
+```
+
+### 07 集合--Queue 
+
+```java
+Array + Blocking（堵塞） + Queue
+ArrayBlockingQueue queue = new ArrayBlockingQueue();
+
+
+
+```
+
+### 08 集合--HashMap
+HashMap 映射
+
+```JAVA
+HashMap底层也是 hash算法 + 数组 + 链表
+HashMap map = new HashMap()
+hashmap中的hash只针对key 也就是key不能相同
+
+
+HashMap<Stirng,Interger> map = new HashMap<Stirng,Interger>();
+
+添加数据 put 如果输入的key已经存在，那么会覆盖掉之前的key，返回旧的值。
+		putIfAbsent 如果输入的key已经存在
+查询数据 get 输入key返回Value
+修改数据 replace
+
+
+```
+
+
+### 09 集合--Hashtable
+
+Hashtable和HashMap区别
+1 实现方式不一样：继承父类不一样
+2 底层结构的容量不同 HashMap(16) Hashtable(11)
+3 Hashtabel 的k，v不能为null
+4 HashMap的数据定位采用的是Hash算法 Hashtable采用的是Hashcode
+5 HashMap的性能较高 
+
+
+
+### 10集合--迭代器
+```java
+
+public class Main {  
+    public static void main(String[] args) {  
+        HashMap<String, Integer> map = new HashMap<>();  
+        map.put("a", 1);  
+        map.put("b", 2);  
+        map.put("c", 3);  
+        Set<String> keys = map.keySet();  
+        
+        //如果在遍历map的过程移除数据会对map对象进行修改 导致后面的语法运行不了
+        for (String key : keys) {  
+            if("a".equals(key)) {  
+                map.remove(key);  
+            }  
+            System.out.println(map.get(key));  
+        }  
+        
+        所以使用迭代器来操作
+        Iterator<String> iterator = keys.iterator();  
+		while (iterator.hasNext()) {  
+		    String key = iterator.next();  
+		    if("a".equals(key)) {  
+		        //remove方法只能对当前数据删除  
+		        iterator.remove();  
+		    }  
+		}
+    }  
+    
+    
+}
 
 
 
 
+```
+
+### 11集合--工具类 工具类都是静态类 方法可以直接使用
+```java
+
+1 Arrays
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
