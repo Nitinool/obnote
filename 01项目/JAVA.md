@@ -1,10 +1,11 @@
 8/31之前过一遍java基础
 
 
-java基础
+开始 java基础
 变量类型 基本控制语句
 面向对象构建使用 三大特性 
-javaweb
+。。。
+后续 javaweb
 
 
 
@@ -1043,3 +1044,169 @@ class User implements Serializable{
 
 ## 线程 
 
+进程就是一个程序
+线程就是一个程序里面的某个功能
+
+java程序在运行中默认会产生一个进程
+这个进程会有一个主线程 代码都在主线程中执行
+
+```Java
+public class Main {  
+    public static void main(String[] args) throws IOException {  
+  
+        // 创建线程  
+        MyThread thread = new MyThread();  
+        // 启动线程  
+        thread.start();  
+        System.out.println(Thread.currentThread().getName());  
+        //main线程的优先级最高  
+  
+    }  
+}  
+  
+class MyThread extends Thread {  
+    public void run() {  
+        System.out.println(Thread.currentThread().getName());  
+    }  
+}
+
+输出
+main
+Thread-0
+```
+
+线程有五个状态（类似408里面操作系统的进程管理相关知识）
+
+new -> runnable -> terminated
+
+blocked 阻塞
+waiting 等待
+timed-waiting 定时等待
+
+
+### 线程的执行方式 串行和并发
+
+串行执行 多个线程链接成串，然后按照顺序执行
+并行执行 多个线程互相独立 谁先拿到cpu 谁就运行
+```java
+public class Main {  
+    public static void main(String[] args) throws Exception {  
+  
+        // 创建线程  
+        MyThread t1 = new MyThread();  
+        MyThread t2 = new MyThread();  
+        // 启动线程  
+        // 使用join在下一个线程启动前将当前线程加入到串行执行流里面  
+        t1.start();  
+        t1.join();  
+        t2.start();  
+        t2.join();  
+        System.out.println(Thread.currentThread().getName());  
+        System.out.println("main执行完毕");  
+        //main线程的优先级最高  
+    }  
+}  
+  
+class MyThread extends Thread {  
+    public void run() {  
+        System.out.println(Thread.currentThread().getName());  
+    }  
+}
+```
+
+线程休眠 sleep方法
+
+自定义线程
+```java
+1 继承线程父类
+2 重写run方法
+class MyThread extends Thread {  
+    public void run() {  
+        System.out.println(Thread.currentThread().getName());  
+    }  
+}
+MyThread t1 = new MyThread();  
+
+也可以直接用 () -> {逻辑} 的方法创建线程
+Thread t1 = new Thread(() -> {System.out.println(Thread.currentThread().getName());
+});  
+
+还可以传递实现了runnable接口的类的对象 一般使用匿名类
+Thread t1 = new Thread(new Runnable(){
+			@Override
+			public void run(){
+				System.out.println(Thread.currentThread().getName());
+			}
+} );  
+```
+
+
+### 线程池
+
+为了方便管理 不同的线程 可以用线程池去获取线程
+线程池就是线程的容器，可以根据需要在启动时创建一个或多个线程对象
+
+java有四种比较常见的线程池
+```java
+
+代码运行逻辑
+线程池对象里面有多个线程 任务提交给线程池 线程池分配给空闲的线程
+
+1 创建固定数量的线程对象
+ExecutorService是线程服务对象
+
+2 根据实际任务动态创建线程对象 也就是Executors.newFixedThreadPool(3)变成Executors.newCachedThreadPool();
+
+public class Main {  
+    public static void main(String[] args) throws Exception {  
+  
+        ExecutorService executorService = Executors.newFixedThreadPool(3);  
+  
+        for (int i = 0; i < 5; i++) {  
+            executorService.submit(new Runnable() {  
+                @Override  
+                public void run() {  
+                    System.out.println(Thread.currentThread().getName());  
+                }  
+            });  
+        }  
+    }  
+}
+
+3 单一线程 Executors.newSingleThreadExecutor();
+
+4 定时调度线程 Executors.newScheduledThreadPool(4);
+
+```
+
+### 线程--同步
+
+## 反射
+
+```JAVA
+
+user.getClass()获取自己的字节码对象
+通过自己的对象可以获取自己对象的相关信息 父类 属性 接口等信息
+
+public class Main {  
+    public static void main(String[] args) throws Exception {  
+        User user = new User();  
+        Class<? extends User> aClass = user.getClass();  
+    }  
+}  
+  
+class User{  
+      
+}
+```
+
+### 类加载器
+java中的类主要分为三种 不同的类会用不同的加载器加载
+1 java核心库的类
+2 jvm软件开发商 
+3 自己写的类
+
+三种类加载器
+1 BootClassLoader ： 启动类加载器
+2 PlatformClassLoader：平台类加载器
+3 AppClassLoader：应用类加载器
